@@ -4,11 +4,11 @@ namespace Mechaerium
     public class ReactorModule : Module
     {
         [Header("ReactorProperties")]
-        [SerializeField] float[] NormalSpeed;
-        [SerializeField] float[] RunningSpeed;
-        [SerializeField] float[] SelfRepairSpeed;
-        [SerializeField] float[] GatheringSpeed;
-        [SerializeField] float[] AimingRotationSpeed;
+        [SerializeField] internal float[] NormalSpeed;
+        [SerializeField] internal float[] RunningSpeed;
+        [SerializeField] internal float[] SelfRepairSpeed;
+        [SerializeField] internal float[] GatheringSpeed;
+        [SerializeField] internal float[] AimingRotationSpeed;
         public void ReactorTick()
         {
 

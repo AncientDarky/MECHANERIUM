@@ -6,6 +6,11 @@ namespace Mechaerium
         [Header("Orbital Hacking")]
         [SerializeField] float[] HackingSpeed;
         [SerializeField] float[] HackingRange;
+
+        private void Start()
+        {
+            Invulnerable = false;
+        }
         public void CPUTick()
         {
 

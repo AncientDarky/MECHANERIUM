@@ -25,7 +25,8 @@ namespace Mechaerium
         [SerializeField] Cost[] UpgradeCost;
         [SerializeField] Cost[] MaterialConsumption;
         [SerializeField] Cost[] OverloadedMaterialConsumption;
-
+        public bool InventoryHasBaseCostMaterial => Mecha.STORERAGE.HasEnoughMaterial(MaterialConsumption[ModuleLevel].Material, MaterialConsumption[ModuleLevel].Value);
+        public bool InventoryHasOverloadedCostMaterial => Mecha.STORERAGE.HasEnoughMaterial(OverloadedMaterialConsumption[ModuleLevel].Material, OverloadedMaterialConsumption[ModuleLevel].Value);
 
         public Action OnUpraded;
         public Action<ModuleStates> StateChanged;
@@ -40,12 +41,21 @@ namespace Mechaerium
         }
         public void ReduceHP(float Damage)
         {
+           
             if (Invulnerable) { return; }
+            Hitpoint -= Damage;
+            if (Hitpoint <= 0)
+            {
+                ChangingState(ModuleStates.Destroyed);
+               
+            }
 
         }
         public void RegainHP(float HPGain)
         {
-
+            
+            Hitpoint = Mathf.Clamp(Hitpoint + HPGain,0,MaxHitpoint);
+            
         }
         public void ChangingState(ModuleStates ToState)
         {
