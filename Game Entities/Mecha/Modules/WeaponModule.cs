@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.VFX;
 namespace Mechaerium
 {
     public class WeaponModule : Module
@@ -14,7 +15,7 @@ namespace Mechaerium
         [SerializeField] float[] ReloadingDuration;
 
         public Animator WeaponAnimator;
-
+        [SerializeField] internal VisualEffect Visuals;
         public Vector3 MouseWorldLocationCurrent;
 
         private void Awake()
@@ -40,13 +41,19 @@ namespace Mechaerium
 
                     WeaponAnimator.SetBool("IsIdle", false);
 
+                    Visuals.SetBool("Toggle",true);
+
                 }
             }
         }
+       
         public void WeaponStopFiring()
         {
           WeaponAnimator.SetBool("IsFiring", false);
           WeaponAnimator.SetBool("IsIdle", true);
+
+            Visuals.SetBool("Toggle", false);
+
         }
         public void ToggleOnOff(bool Value)
         {

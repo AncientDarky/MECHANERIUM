@@ -4,6 +4,7 @@ using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 namespace Mechaerium
 {
     [Serializable]
@@ -52,7 +53,7 @@ namespace Mechaerium
         CameraTarget CurrentTarget;
         #endregion
         #region Mouse position in world 
-        public Vector3 MouseWorldPosition;
+        public static Vector3 MouseWorldPosition;
         #endregion
         Storage MechStorage;
         public static Storage STORERAGE { get { if (FindAnyObjectByType<Mecha>().MechStorage != null) { return FindAnyObjectByType<Mecha>().MechStorage; } FindAnyObjectByType<Mecha>().MechStorage = new Storage(); return FindAnyObjectByType<Mecha>().MechStorage; } }
@@ -60,11 +61,14 @@ namespace Mechaerium
         public List<WeaponModule>Arsenal = new List<WeaponModule>();
 
 
-
-
         Damage dama;
 
         float t;
+
+
+        #region UI Elements 
+        [SerializeField] Image[] ToggleIcons,WeaponIcons;
+        #endregion
 
         private void OnEnable()
         {
@@ -73,19 +77,21 @@ namespace Mechaerium
          LeftShift.action.started += LeftShifting;
          LeftShift.action.canceled += LeftShifting;
 
+
          LMB.action.Enable();
-         LMB.action.started += FiringManualWeapons;
-         LMB.action.canceled += FiringManualWeapons;
+         LMB.action.started += FiringLMBManualWeapons;
+         LMB.action.canceled += FiringLMBManualWeapons;
        
         }
         private void OnDisable()
         {
 
          LMB.action.Disable();
-         LMB.action.started -= FiringManualWeapons;
-         LMB.action.canceled -= FiringManualWeapons;
+         LMB.action.started -= FiringLMBManualWeapons;
+         LMB.action.canceled -= FiringLMBManualWeapons;
 
-         LeftShift.action.Disable();
+
+            LeftShift.action.Disable();
          LeftShift.action.started -= LeftShifting;
          LeftShift.action.canceled -= LeftShifting;
        
@@ -105,6 +111,8 @@ namespace Mechaerium
             MechStorage = new Storage();
 
             ChangeMechaState(MechaStates.Idle);
+
+            UpdatingWeaponToggles();
         }
         public void TakeDamage(Damage damage)
         {
@@ -163,13 +171,7 @@ namespace Mechaerium
             }
             AimingAtDiretion();
 
-            foreach (WeaponModule Weapon in Arsenal)
-            {
-                if ( Weapon.ToggleOn)
-                {
-                    Weapon.MouseWorldLocationCurrent = MouseWorldPosition;
-                }
-            }
+         
         }
         void Move()
         {
@@ -249,30 +251,122 @@ namespace Mechaerium
             }
         }
 
-        void FiringManualWeapons(InputAction.CallbackContext context)
+        void FiringLMBManualWeapons(InputAction.CallbackContext context)
         {
             if(context.started)
             {
-                foreach (WeaponModule Weapon in Arsenal)
+                for (int a = 0; a < 3;a++)
                 {
-                    if(Weapon.ManuallyControlled)
+                    if (Arsenal[a] != null)
                     {
-                        Weapon.WeaponStartFiring();
+                        if (Arsenal[a].ManuallyControlled)
+                        {
+                            Arsenal[a].WeaponStartFiring();
+                        }
+                    }
+                    else
+                    {
+                        continue;
                     }
                 }
             }
             else if(context.canceled)
             {
-                foreach (WeaponModule Weapon in Arsenal)
+                for (int a = 0; a < 3; a++)
                 {
-                    if (Weapon.ManuallyControlled)
+                    if (Arsenal[a] != null)
                     {
-                        Weapon.WeaponStopFiring();
+                        if (Arsenal[a].ManuallyControlled)
+                        {
+                            Arsenal[a].WeaponStopFiring();
+                        }
+                    }
+                    else
+                    {
+                        continue;
                     }
                 }
             }
                
         }
+        void FiringRMBWeapons(InputAction.CallbackContext context)
+        {
+            if (context.started)
+            {
+                for (int a = 3; a < 6; a++)
+                {
+                    if (Arsenal[a] != null)
+                    {
+                        if (Arsenal[a].ManuallyControlled)
+                        {
+                            Arsenal[a].WeaponStartFiring();
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+            else if (context.canceled)
+            {
+                for (int a = 0; a < 3; a++)
+                {
+                    if (Arsenal[a] != null)
+                    {
+                        if (Arsenal[a].ManuallyControlled)
+                        {
+                            Arsenal[a].WeaponStopFiring();
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+
+        }
+
+        #region UI 
+        void SettingUpUI()
+        {
+
+        }
+        public void ToggleWeapons(int index)
+        {
+            if (Arsenal[index] == null) { return;  }
+            Arsenal[index].ToggleOn = !Arsenal[index].ToggleOn;
+
+            UpdatingWeaponToggles();
+        }
+        
+        void UpdatingWeaponToggles()
+        {
+            object ToggledOn = Resources.Load<Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_ON");
+            object ToggeledOff = Resources.Load<Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_OFF");
+
+           for(int A = 0; A < Arsenal.Count;A++)
+            {
+                if (Arsenal[A] == null)
+                {
+                    ToggleIcons[A].sprite = ToggeledOff as Sprite;
+                }
+                else if (Arsenal[A].ToggleOn)
+                {
+                    ToggleIcons[A].sprite = ToggledOn as Sprite;
+
+                }
+                 else if (Arsenal[A].ToggleOn == false)
+                {
+                    ToggleIcons[A].sprite = ToggeledOff as Sprite;
+
+                }
+            }
+       
+
+        }
+        #endregion
 
     }
 }

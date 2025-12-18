@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Mechaerium
 {
@@ -14,37 +15,52 @@ namespace Mechaerium
         [SerializeField] float[] ProjectileVelocity;
         [SerializeField] LayerMask TargetsLayer;
 
-
+        
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
             ManuallyControlled = true;
             WeaponAnimator.SetFloat("FireRate", FireRate[ModuleLevel]);
+            Visuals.SetFloat("FireRate", FireRate[ModuleLevel]);
         }
         
         public void FireMinigun()
         {
-            Vector3 FireDirection = this.transform.forward;
 
-           
+            Vector3 FireDirection = this.transform.forward;
+            Vector3 FireDirectionWithAccuracy = FireDirection + ProjectileAccurcy();
+
+
+            Visuals.SetVector3("Direction", FireDirectionWithAccuracy * ProjectileVelocity[ModuleLevel]);
+            Visuals.SetFloat("FireRate", FireRate[ModuleLevel]);
+            Visuals.SetFloat("Velocity", ProjectileVelocity[ModuleLevel]);
+
+
+            Visuals.SetFloat("LifeTime", 3f);
 
             RaycastHit TargetHit;
-            if (Physics.Raycast(this.transform.position, (FireDirection + ProjectileAccurcy()) * Range[ModuleLevel], out TargetHit, TargetsLayer))
+            if (Physics.Raycast(this.transform.position, (FireDirectionWithAccuracy) * Range[ModuleLevel], out TargetHit, TargetsLayer))
             {
                 if(TargetHit.collider.gameObject.tag == "Enemy")
                 {
 
-                    Debug.DrawRay(this.transform.position, (FireDirection + ProjectileAccurcy()) * Range[ModuleLevel], Color.blue, 5);
+                    Vector3 ProjectileDirection = TargetHit.collider.transform.position - this.transform.position;
+
+                    Debug.DrawRay(this.transform.position, (FireDirectionWithAccuracy) * Range[ModuleLevel], Color.blue, 5);
 
                     float TimeUntilHit = Vector3.Distance(TargetHit.transform.position, this.transform.position) / ProjectileVelocity[ModuleLevel];
 
+                    Visuals.SetFloat("LifeTime",TimeUntilHit);
+                    Invoke("DamagedTarget",TimeUntilHit);
                     Debug.Log("Hit a valid target");
                 }
                 else
                 {
+                    Vector3 ProjectileDirection = transform.localEulerAngles.normalized;
 
-                    Debug.DrawRay(this.transform.position, (FireDirection + ProjectileAccurcy()) * Range[ModuleLevel], Color.red, 5);
+
+                    Debug.DrawRay(this.transform.position, (FireDirectionWithAccuracy) * ProjectileVelocity[ModuleLevel], Color.red, 5);
 
                     float TimeUntilHit = Vector3.Distance(TargetHit.transform.position, this.transform.position) / ProjectileVelocity[ModuleLevel];
 
@@ -52,6 +68,10 @@ namespace Mechaerium
 
                 }
             }
+
+        }
+        void DamagedTarget()
+        {
 
         }
         Vector3 ProjectileAccurcy()
@@ -65,10 +85,10 @@ namespace Mechaerium
 
             X = X - X * Accurcy;
 
-            float Y = Random.Range(MinOffset.y, MaxOffset.y);
-            Y = Y - Y * Accurcy;
+            float Z = Random.Range(MinOffset.z, MaxOffset.z);
+            Z = Z - Z * Accurcy;
 
-            return new Vector3(X, Y, 0);
+            return new Vector3(X, 0, Z);
 
 
         }

@@ -10,8 +10,7 @@ namespace Mechaerium
         [Header("Mortar Properties")]
         [SerializeField] Transform[] MortarCannons;
         [SerializeField] GameObject Shell;
-
-        [SerializeField] Vector3 ProjectileVelocity;
+        [SerializeField] float FlightTime;
         [SerializeField] float ProjectileSpeed;
         [SerializeField] float FireDelayBetweenShots;
         [SerializeField] float []ShellAccuracy;
@@ -29,17 +28,28 @@ namespace Mechaerium
         {
             CurrentCanon = MortarCannons[Random.Range(0, MortarCannons.Length - 1)];
 
-            Vector3 TargetLocation = MouseWorldLocationCurrent;
+
+
+            Vector3 TargetLocation = Mecha.MouseWorldPosition;
             Vector3 TargetWithAccurcy = TargetLocation + ProjectileAccurcy();
-            Vector3 ProjectileDir = TargetWithAccurcy - CurrentCanon.position;
+            Vector3 ProjectileDir = new Vector3( TargetWithAccurcy.x - CurrentCanon.position.x,0, TargetWithAccurcy.z - CurrentCanon.position.z);
+
+            Vector3 Result = (TargetWithAccurcy - CurrentCanon.position - 0.5f * Physics.gravity * FlightTime * FlightTime) / FlightTime;
+
+            Visuals.SetVector3("DirectionVelo", Result);
+            Visuals.SetVector3("TargetLocation", new Vector3(TargetWithAccurcy.x, 0,TargetWithAccurcy.z));
+            Visuals.SetBool("Toggle", true);
+
 
             GameObject NewShell = Instantiate(Shell, TargetWithAccurcy,Quaternion.identity);
+            NewShell.GetComponent<ArtilleryShell>().Init(FlightTime);
             Debug.Log("FiredShell");
 
         }
         public void NotFiring()
         {
             WeaponStopFiring();
+            Visuals.SetBool("Toggle", false);
 
         }
         Vector3 ProjectileAccurcy()
