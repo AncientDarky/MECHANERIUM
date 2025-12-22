@@ -21,7 +21,7 @@ namespace Mechaerium
         private void Start()
         {
 
-           
+            Visuals.SetBool("Toggle",false);
 
         }
         public void FireShell()

@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 namespace Mechaerium
 {
@@ -23,10 +24,12 @@ namespace Mechaerium
         internal bool Invulnerable;
         [SerializeField] int MaxModuleLevel;
         [SerializeField] Cost[] UpgradeCost;
-        [SerializeField] Cost[] MaterialConsumption;
+        public float UPGRADECOSTAMT => UpgradeCost[0].Value;
+        [SerializeField] internal Cost[] MaterialConsumption;
         [SerializeField] Cost[] OverloadedMaterialConsumption;
         public bool InventoryHasBaseCostMaterial => Mecha.STORERAGE.HasEnoughMaterial(MaterialConsumption[ModuleLevel].Material, MaterialConsumption[ModuleLevel].Value);
         public bool InventoryHasOverloadedCostMaterial => Mecha.STORERAGE.HasEnoughMaterial(OverloadedMaterialConsumption[ModuleLevel].Material, OverloadedMaterialConsumption[ModuleLevel].Value);
+
 
         public Action OnUpraded;
         public Action<ModuleStates> StateChanged;
@@ -37,7 +40,12 @@ namespace Mechaerium
         }
         public void IncreaseLevel()
         {
-            OnUpraded?.Invoke();
+
+            if (Mecha.STORERAGE.HasEnoughMaterial(UpgradeCost[0].Material, UpgradeCost[0].Value))
+            {
+                ModuleLevel = Mathf.Clamp(ModuleLevel + 1,0,MaxModuleLevel);
+                OnUpraded?.Invoke();
+            }
         }
         public void ReduceHP(float Damage)
         {

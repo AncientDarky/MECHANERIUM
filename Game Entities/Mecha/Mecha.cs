@@ -259,8 +259,9 @@ namespace Mechaerium
                 {
                     if (Arsenal[a] != null)
                     {
-                        if (Arsenal[a].ManuallyControlled)
+                        if (Arsenal[a].FuncType == FunctionalityType.Manual)
                         {
+                            
                             Arsenal[a].WeaponStartFiring();
                         }
                     }
@@ -276,7 +277,7 @@ namespace Mechaerium
                 {
                     if (Arsenal[a] != null)
                     {
-                        if (Arsenal[a].ManuallyControlled)
+                        if (Arsenal[a].FuncType == FunctionalityType.Manual)
                         {
                             Arsenal[a].WeaponStopFiring();
                         }
@@ -297,7 +298,7 @@ namespace Mechaerium
                 {
                     if (Arsenal[a] != null)
                     {
-                        if (Arsenal[a].ManuallyControlled)
+                        if (Arsenal[a].FuncType == FunctionalityType.Manual)
                         {
                             Arsenal[a].WeaponStartFiring();
                         }
@@ -314,7 +315,7 @@ namespace Mechaerium
                 {
                     if (Arsenal[a] != null)
                     {
-                        if (Arsenal[a].ManuallyControlled)
+                        if (Arsenal[a].FuncType == FunctionalityType.Manual)
                         {
                             Arsenal[a].WeaponStopFiring();
                         }

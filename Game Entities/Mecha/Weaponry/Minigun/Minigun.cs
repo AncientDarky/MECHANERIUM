@@ -20,9 +20,9 @@ namespace Mechaerium
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
-            ManuallyControlled = true;
             WeaponAnimator.SetFloat("FireRate", FireRate[ModuleLevel]);
             Visuals.SetFloat("FireRate", FireRate[ModuleLevel]);
+            Visuals.SetBool("Toggle",false);
         }
         
         public void FireMinigun()
