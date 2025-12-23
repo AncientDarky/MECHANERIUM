@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
@@ -17,6 +18,11 @@ namespace Mechaerium
     public class Mecha : MonoBehaviour
     {
         [SerializeField]MechaStates state;
+
+
+        public Action<Vector3> OnPlayerPositionChanged;
+        Coroutine SingalPlayerPos;
+        bool EnemyNearby;
 
         public bool TestingHealth;
        public List<Module>MechaModules = new List<Module>();
@@ -98,6 +104,8 @@ namespace Mechaerium
         }
         private void Start()
         {
+            EnemyNearby = true;
+            SingalPlayerPos = StartCoroutine(SignalPlayerLocation());
             CurrentTarget = new CameraTarget();
             CurrentTarget.TrackingTarget = this.gameObject.transform;
             CinemachineCamera.Target = CurrentTarget;
@@ -328,7 +336,14 @@ namespace Mechaerium
             }
 
         }
-
+        IEnumerator SignalPlayerLocation()
+        {
+            while(EnemyNearby)
+            {
+                yield return new WaitForSeconds(1);
+                OnPlayerPositionChanged?.Invoke(this.transform.position);
+            }
+        }
         #region UI 
         void SettingUpUI()
         {

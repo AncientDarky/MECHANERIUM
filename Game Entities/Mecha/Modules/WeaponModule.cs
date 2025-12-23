@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
+using Robitnekics;
+
 namespace Mechaerium
 {
     public class WeaponModule : Module
@@ -188,6 +190,14 @@ namespace Mechaerium
         {
             Destroy(this.gameObject);
         }
-
+        private void LateUpdate()
+        {
+            if (FuncType == FunctionalityType.Automatic && CurrentTarget)
+            {
+                Vector3 Dir = CurrentTarget.transform.position - this.transform.position;
+                float AngleY = Mathf.Atan2(Dir.x,Dir.z) * Mathf.Rad2Deg;
+                this.gameObject.transform.rotation = Quaternion.Euler(0,AngleY,0); 
+            }
+        }
     }
 }

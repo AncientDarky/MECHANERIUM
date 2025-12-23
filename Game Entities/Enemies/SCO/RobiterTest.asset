@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7884eaaa549fc164981688e838d6788f, type: 3}
+  m_Name: RobiterTest
+  m_EditorClassIdentifier: 
+  MaxHP: 100
+  SlowSpeed: 0
+  NormalSpeed: 0.75
+  BoostSpeed: 0
+  AttackRange: 1
+  PlayerDetectionRange: 10
+  Attackspeed: 2
+  BaseDamage:
+    Physical: 0
+    Piercing: 0
+    Heat: 0
+    Explosion: 0
+  PhysicalResist: 0
+  PiercResist: 0
+  HeatResist: 0
+  ExploResist: 0
+  StunChanceResistance: 0
+  BurnChanceResistance: 0
+  DeflectionChance: 0
