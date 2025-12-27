@@ -596,20 +596,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  ToggleIcons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  WeaponIcons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  ToggleIcons: []
+  WeaponIcons: []
 --- !u!114 &1427990875030733249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -623,10 +611,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hitpoint: 200
-  MaxHitpoint: 200
+  MaxHitpoint: fa000000
   ModuleLevel: 0
-  MaxModuleLevel: 0
-  UpgradeCost: []
+  MaxModuleLevel: 1
+  UpgradeCost:
+  - Material: 6
+    Value: 2
   MaterialConsumption: []
   OverloadedMaterialConsumption: []
   GatheringYield:
@@ -637,6 +627,7 @@ MonoBehaviour:
   - 2
   GatheringDamage:
   - 20
+  - 40
   GatheringRange:
   - 5
   - 5
@@ -655,18 +646,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hitpoint: 200
-  MaxHitpoint: 200
+  MaxHitpoint: f4010000e2040000
   ModuleLevel: 0
-  MaxModuleLevel: 0
-  UpgradeCost: []
+  MaxModuleLevel: 2
+  UpgradeCost:
+  - Material: 6
+    Value: 1
   MaterialConsumption: []
   OverloadedMaterialConsumption: []
   VisionRange: 0
-  MaxLifeCapacity: 0
+  MaxLifeCapacity: e8030000dc050000
   RemainingLifeSupport: 0
-  MaximumWeaponSlot: 
+  MaximumWeaponSlot: 0200000004000000
   WeaponSlots: []
-  SelfRepairConsumption: []
 --- !u!114 &2583077253685741664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -680,18 +672,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hitpoint: 200
-  MaxHitpoint: 200
+  MaxHitpoint: fa000000
   ModuleLevel: 0
-  MaxModuleLevel: 0
-  UpgradeCost: []
+  MaxModuleLevel: 1
+  UpgradeCost:
+  - Material: 6
+    Value: 1
   MaterialConsumption: []
   OverloadedMaterialConsumption: []
   NormalSpeed:
   - 0.0085
+  - 0.0085
   RunningSpeed:
   - 0.015
-  SelfRepairSpeed: []
+  - 0.015
+  SelfRepairSpeed:
+  - 1
+  - 2
   AimingRotationSpeed:
+  - 1.5
   - 1.5
 --- !u!114 &2081444019105167519
 MonoBehaviour:
@@ -706,9 +705,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hitpoint: 200
-  MaxHitpoint: 200
+  MaxHitpoint: fa000000
   ModuleLevel: 0
-  MaxModuleLevel: 0
+  MaxModuleLevel: 1
   UpgradeCost:
   - Material: 6
     Value: 0
@@ -719,9 +718,9 @@ MonoBehaviour:
   - 0.5
   - 0.5
   PhysicalResistance:
-  - 2
-  - 2.5
-  - 3
+  - 0.2
+  - 0.22
+  - 0.325
   Piercing:
   - 0
   - 0.5
@@ -742,15 +741,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5df21619fc2d1114ab95f4369b46cf94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Hitpoint: 200
-  MaxHitpoint: 200
+  Hitpoint: 0
+  MaxHitpoint: fa000000
   ModuleLevel: 0
-  MaxModuleLevel: 0
-  UpgradeCost: []
+  MaxModuleLevel: 1
+  UpgradeCost:
+  - Material: 6
+    Value: 1
   MaterialConsumption: []
   OverloadedMaterialConsumption: []
-  HackingSpeed: []
-  HackingRange: []
+  HackingSpeed:
+  - 40
+  - 4
+  HackingRange:
+  - 2
+  - 4
+  BaseSpeed: 1
+  InitiationTime: 5
+  LosingCompleteConnectionDuration: 10
+  HackingBar: {fileID: 0}
+  ConnectSymbol: {fileID: 0}
+  ProgressionTextBar: {fileID: 0}
 --- !u!114 &7865473648083177639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -764,15 +775,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hitpoint: 200
-  MaxHitpoint: 200
+  MaxHitpoint: fa000000
   ModuleLevel: 0
-  MaxModuleLevel: 0
-  UpgradeCost: []
+  MaxModuleLevel: 1
+  UpgradeCost:
+  - Material: 6
+    Value: 1
   MaterialConsumption: []
   OverloadedMaterialConsumption: []
-  RadarStrength: []
-  RadarRange: []
-  RadarCooldown: []
+  RadarStrength:
+  - 1
+  - 1
+  RadarRange:
+  - 30
+  - 40
+  RadarCooldown:
+  - 8
+  - 6
+  Warnings:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  NodeWarningColor: {r: 0, g: 1, b: 1, a: 1}
+  CrateWarningColor: {r: 0.82825136, g: 0, b: 1, a: 1}
+  RobiterWarningColor: {r: 1, g: 0, b: 0, a: 1}
+  InactiveColor: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
 --- !u!143 &3434130437461181418
 CharacterController:
   m_ObjectHideFlags: 0
@@ -894,7 +921,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 50
+  orthographic size: 175
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -937,10 +964,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   volumeAnchorOverride: {fileID: 0}
-  antialiasing: 0
+  antialiasing: 2
   SMAAQuality: 2
   dithering: 0
-  stopNaNs: 0
+  stopNaNs: 1
   taaSharpenStrength: 0.5
   TAAQuality: 1
   taaSharpenMode: 0
@@ -1941,8 +1968,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8474802431100644533, guid: 5e78206260dd6ec419c082dc190936a7, type: 3}
+      propertyPath: BaseDamage.Physical
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8474802431100644533, guid: 5e78206260dd6ec419c082dc190936a7, type: 3}
       propertyPath: TargetsLayer.m_Bits
       value: 2048
+      objectReference: {fileID: 0}
+    - target: {fileID: 8474802431100644533, guid: 5e78206260dd6ec419c082dc190936a7, type: 3}
+      propertyPath: 'ProjectileVelocity.Array.data[0]'
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -4,14 +4,14 @@ namespace Mechaerium
     public class ArmourModule : Module
     {
         [Header("Armour Properties")]
-        [SerializeField] float[] HeatResistance;
+        [SerializeField][Range(0.0f, 1.0f)] float[] HeatResistance;
         public float HEATRESIST => HeatResistance[ModuleLevel];
-        [SerializeField] float[] PhysicalResistance;
+        [SerializeField][Range(0.0f, 1.0f)] float[] PhysicalResistance;
         public float PHSICALRESIST => PhysicalResistance[ModuleLevel];
-        [SerializeField] float[] Piercing;
+        [SerializeField][Range(0.0f, 1.0f)] float[] Piercing;
         public float PIERCINGRESIST => Piercing[ModuleLevel];
 
-        [SerializeField] float[] ExplosionResistance;
+        [SerializeField][Range(0.0f,1.0f)] float[] ExplosionResistance;
         public float EXPLORESIST => ExplosionResistance[ModuleLevel];
 
         ArmourDisplayer CharacterSheet_ArmourDisplayer;

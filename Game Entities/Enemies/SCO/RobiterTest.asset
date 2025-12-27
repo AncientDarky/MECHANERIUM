@@ -20,7 +20,7 @@ MonoBehaviour:
   PlayerDetectionRange: 10
   Attackspeed: 2
   BaseDamage:
-    Physical: 0
+    Physical: 10
     Piercing: 0
     Heat: 0
     Explosion: 0

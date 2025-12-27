@@ -89,7 +89,6 @@ public class Storage
         float[] ConsumptionValues = new float[Inventory.Count - 2];
         for(int i = 0; i < 4;i++)
         {
-            Debug.Log("SSS" + TotalConsump[i].Value);
             ConsumptionValues[i] = TotalConsump[i].Value;
         }
         return ConsumptionValues;

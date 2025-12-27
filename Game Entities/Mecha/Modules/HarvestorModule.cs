@@ -19,7 +19,8 @@ namespace Mechaerium
 
 
 
-        SphereCollider DetectorNodes;
+        SphereCollider DetectorColli;
+        ObjectDetector HarvestDetect;
         Coroutine HarvestingCoro;
 
         public List<Node>NodeList = new List<Node>();
@@ -27,16 +28,33 @@ namespace Mechaerium
         bool NodeWithinRange => NodeList.Count > 0;
         private void Awake()
         {
-            GameObject NewChild = new GameObject("HarvestorDetector");
+            GameObject NewChild = new GameObject("ObjectDetector_Harvestor");
             NewChild.transform.SetParent(this.gameObject.transform);
             NewChild.transform.position = this.transform.position;
 
-            DetectorNodes = NewChild.AddComponent<SphereCollider>();
-            DetectorNodes.isTrigger = true;
-            DetectorNodes.radius = GATHERRANGE;
+            DetectorColli = NewChild.AddComponent<SphereCollider>();
+            HarvestDetect = NewChild.AddComponent<ObjectDetector>();
+            ObjectDetector.DetectionTarget[] TargetsToDetect = new ObjectDetector.DetectionTarget[]
+            { ObjectDetector.DetectionTarget.Node};
+
+            HarvestDetect.Init(TargetsToDetect);
+            HarvestDetect.OnGameObjectDetected += OnNodeEncountered;
+            HarvestDetect.OnGameObjectExited += OnNodeExited;
+            DetectorColli.isTrigger = true;
+            DetectorColli.radius = GATHERRANGE;
 
         }
-        private void OnTriggerEnter(Collider other)
+        private void OnEnable()
+        {
+            
+        }
+        private void OnDisable()
+        {
+
+            HarvestDetect.OnGameObjectDetected -= OnNodeEncountered;
+            HarvestDetect.OnGameObjectExited -= OnNodeExited;
+        }
+        private void OnNodeEncountered(GameObject other)
         {
             switch(other.gameObject.tag)
             {
@@ -47,7 +65,7 @@ namespace Mechaerium
                     break;
             }
         }
-        private void OnTriggerExit(Collider other)
+        private void OnNodeExited(GameObject other)
         {
             switch (other.gameObject.tag)
             {
@@ -121,5 +139,20 @@ namespace Mechaerium
 
             }
         }
+
+        #region UI Chartacter Sheet 
+        public float[] TransferModuleValues(int Index)
+        {
+            float[] Values = new float[4];
+
+            Values[0] = GatheringDamage[Index];
+            Values[1] = GatheringYield[Index];
+            Values[2] = GatheringRange[Index];
+            Values[3] = MaximumTargets[Index];
+
+            return Values;
+        }
     }
+        #endregion
+    
 }

@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hitpoint: 0
-  MaxHitpoint: 250
+  MaxHitpoint: 64000000
   ModuleLevel: 0
   MaxModuleLevel: 2
   UpgradeCost: []
@@ -247,17 +247,17 @@ MonoBehaviour:
   - Material: 1
     Value: 0
   OverloadedMaterialConsumption: []
+  FuncType: 0
+  AutoEngageDetector: {fileID: 0}
   BaseDamage:
     Physical: 0
     Piercing: 0
     Heat: 0
     Explosion: 0
   ToggleOn: 0
-  ManuallyControlled: 0
   InstallCost:
     Material: 0
     Value: 0
-  targetDetector: {fileID: 7104742701258962722}
   AutoEngageRange:
   - 5
   MaxProjectileTravelDistance:
@@ -267,6 +267,7 @@ MonoBehaviour:
   WeaponAnimator: {fileID: 0}
   Visuals: {fileID: 1473615215405695696}
   MouseWorldLocationCurrent: {x: 0, y: 0, z: 0}
+  CurrentTarget: {fileID: 0}
   FireRate:
   - 5
   Accuracy:

@@ -1,5 +1,5 @@
+using Robitnekics;
 using UnityEngine;
-using UnityEngine.VFX;
 
 namespace Mechaerium
 {
@@ -15,7 +15,7 @@ namespace Mechaerium
         [SerializeField] float[] ProjectileVelocity;
         [SerializeField] LayerMask TargetsLayer;
 
-        
+        Robites LastHitTarget;
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
@@ -23,6 +23,8 @@ namespace Mechaerium
             WeaponAnimator.SetFloat("FireRate", FireRate[ModuleLevel]);
             Visuals.SetFloat("FireRate", FireRate[ModuleLevel]);
             Visuals.SetBool("Toggle",false);
+
+            Hitpoint = MaxHitpoint[ModuleLevel];
         }
         
         public void FireMinigun()
@@ -30,6 +32,10 @@ namespace Mechaerium
 
             Vector3 FireDirection = this.transform.forward;
             Vector3 FireDirectionWithAccuracy = FireDirection + ProjectileAccurcy();
+
+            Debug.Log(FireDirectionWithAccuracy + "asdasd");
+
+            Debug.Log(FireDirectionWithAccuracy + "asdasdTwo");
 
 
             Visuals.SetVector3("Direction", FireDirectionWithAccuracy * ProjectileVelocity[ModuleLevel]);
@@ -50,7 +56,7 @@ namespace Mechaerium
                     Debug.DrawRay(this.transform.position, (FireDirectionWithAccuracy) * Range[ModuleLevel], Color.blue, 5);
 
                     float TimeUntilHit = Vector3.Distance(TargetHit.transform.position, this.transform.position) / ProjectileVelocity[ModuleLevel];
-
+                    LastHitTarget = TargetHit.collider.gameObject.GetComponent<Robites>();
                     Visuals.SetFloat("LifeTime",TimeUntilHit);
                     Invoke("DamagedTarget",TimeUntilHit);
                     Debug.Log("Hit a valid target");
@@ -72,7 +78,7 @@ namespace Mechaerium
         }
         void DamagedTarget()
         {
-
+            LastHitTarget.OnDamaged?.Invoke(BaseDamage);
         }
         Vector3 ProjectileAccurcy()
         {

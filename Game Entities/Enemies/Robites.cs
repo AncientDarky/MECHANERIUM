@@ -1,6 +1,7 @@
 using Mechaerium;
 using System;
 using System.Collections;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,19 +14,21 @@ namespace Robitnekics
         [Header("States")]
         [SerializeField] RobiteStates state;
         [SerializeField] RobiteTypes RobType;
-
+        public RobiteTypes ROBTYPE => RobType;
         [Header("Enemy combat Properties")]
         [SerializeField] RobiteData RobDataCombat;
-        float HP;
-
+        public float HP;
+        [SerializeField] GameObject Loot;
         [Header("Compoenents")]
         NavMeshAgent Agent;
         Mecha Player;
         SphereCollider AttackRangeDetector, DetectionRange;
         Attacker AttackDetetion;
         Detector detector;
+        Animator animator;
         [Header("Locked Crate Properties")]
         Lockedcrate TargetEvent;
+        GameObject AttackingTarget;
         float DespawnAfterEventTimer;
 
         [Header("Radar Peroperties")]
@@ -38,9 +41,14 @@ namespace Robitnekics
         [SerializeField] Cost[] BaseLoot;
 
 
-        public Action OnIdle, OnPlayerEncounter, OnAttacking, OnStun, OnBurn, OnRoam;
+        public Action OnIdle, OnEngagement, OnAttacking, OnStun, OnBurn, OnRoam;
+
+        public Action<Damage> OnDamaged;
 
         Coroutine RoamCorotine;
+        Coroutine AttackCorotine;
+
+
         Vector3[] RoamingPoints;
         int RoamingPointIndex;
 
@@ -49,14 +57,17 @@ namespace Robitnekics
             Player = FindAnyObjectByType<Mecha>();
             Agent = GetComponent<NavMeshAgent>();
 
-            state = RobiteStates.Idle;
+            animator = GetComponent<Animator>();
 
+
+            state = RobiteStates.Idle;
 
             AttackRangeDetector = this.transform.Find("AttackRange").gameObject.GetComponent<SphereCollider>();
             AttackRangeDetector.radius = RobDataCombat.AttackRange;
 
 
             DetectionRange = this.transform.Find("Detection").gameObject.GetComponent<SphereCollider>();
+
             DetectionRange.radius = RobDataCombat.PlayerDetectionRange;
 
             DetectionRange.isTrigger = true;
@@ -68,13 +79,24 @@ namespace Robitnekics
             AttackDetetion.Owner = this;
             detector.Owner = this;
             RoamingPoints = new Vector3[3];
+
+
         }
 
 
         private void Start()
         {
+           
+
+
+            Minimap_Icon.SetActive(false);
             Agent.speed = RobDataCombat.NormalSpeed;
-            switch(RobType)
+            animator.SetFloat("AttackspeedMultipler", 1 / RobDataCombat.Attackspeed);
+            animator.SetFloat("MovementSpeedMultiplier", RobDataCombat.NormalSpeed);
+
+            HP = RobDataCombat.MaxHP;
+
+            switch (RobType)
             {
                 default:
                     OnRoam?.Invoke();
@@ -83,49 +105,121 @@ namespace Robitnekics
                     GoingAfterPlayer();
                     break;
                 case RobiteTypes.CrateRobite:
-
+                    OnEngagement?.Invoke();
                     break;
             }
 
+
         }
-        public void Reinit(Lockedcrate Crate,Mecha Player)
+        public void Reinit(Lockedcrate Crate,bool StandardOrSudden)
         {
+            Agent.ResetPath();
+
             if (Crate)
             {
                 TargetEvent = Crate;
-                AttackingCrate();
+                RobType = RobiteTypes.CrateRobite;
+                OnEngagement?.Invoke();
+            }
+            else if(StandardOrSudden)
+            {
+                TargetEvent = null;
+                RobType = RobiteTypes.Standard;
+                OnEngagement?.Invoke();
+            }
+            else if (StandardOrSudden == false)
+            {
+
+                RobType = RobiteTypes.SuddenRobite;
+                OnEngagement?.Invoke();
             }
         }
         private void OnEnable()
         {
 
             OnIdle += StartIdle;
-            OnPlayerEncounter += StartPlayerEncounter;
+            OnEngagement += StartPlayerEncounter;
             OnAttacking += StartAttacking;
             OnStun += StartStun;
             OnBurn += StartBurn;
             OnRoam += StartRoam;
+            OnDamaged += DamageReceived;
 
         }
         private void OnDisable()
         {
 
             OnIdle -= StartIdle;
-            OnPlayerEncounter -= StartPlayerEncounter;
+            OnEngagement -= StartPlayerEncounter;
             OnAttacking -= StartAttacking;
             OnStun -= StartStun;
             OnBurn -= StartBurn;
             OnRoam -= StartRoam;
+            OnDamaged -= DamageReceived;
 
         }
-    
-        public void Died()
+        void DamageReceived(Damage damage)
         {
-            if (0 == 0)
+            // calculate Resistance 
+
+            float IncomingPhysicalDamage = damage.Physical - damage.Physical *  RobDataCombat.PhysicalResist;
+            float IncomingPiercingDamage = damage.Piercing - damage.Piercing *  RobDataCombat.PiercResist;
+            float IncomingHeatDamage = damage.Heat - damage.Heat * RobDataCombat.HeatResist;
+            float IncomingExplosiveDamage = damage.Explosion - damage.Explosion * RobDataCombat.ExploResist;
+
+
+
+            // calculate effects Chance triggering 
+           
+            
+
+            // applying damage 
+
+            HP -= IncomingPhysicalDamage;
+            HP -= IncomingPiercingDamage;
+            HP -= IncomingHeatDamage;
+            HP -= IncomingExplosiveDamage;
+
+            // check for remaining HP 
+            if(HP > 0)
             {
-                OnDeath?.Invoke(this.gameObject);
-                this.gameObject.SetActive(false);
+                Debug.Log("Damage Received but still alive" + HP);
+                switch(RobType)
+                {
+                    case RobiteTypes.SuddenRobite:
+                        break;
+                        case RobiteTypes.CrateRobite:
+                        GoingAfterPlayer();
+                        break;
+                    default:
+                        break;
+                }
+                return;
+
             }
+            Died();
+            // Dropping Loots 
+            if(Loot)
+            {
+                Instantiate(Loot, this.transform.position, Quaternion.identity);
+            }
+            // Disabling Corotines & Scripts 
+            
+            
+        }
+        void Died()
+        {
+            state = RobiteStates.Death;
+            HandleState();
+            OnDeath?.Invoke(this.gameObject);
+
+        }
+        public void RemovingEntitiy()
+        {
+            StopAllCoroutines();
+            // Removing Game Entity
+            this.enabled = false;
+            Destroy(this.gameObject);
         }
         void HandleState()
         {
@@ -134,7 +228,7 @@ namespace Robitnekics
                 case RobiteStates.Idle:
 
                     break;
-                case RobiteStates.Moving:
+                case RobiteStates.Moving:// must know when Crate start chasing player again if it was damaged by player 
 
                     switch(RobType)
                     {
@@ -144,17 +238,44 @@ namespace Robitnekics
 
                             break;
                         case RobiteTypes.CrateRobite:
+                            if(AttackingTarget == Player.gameObject)
+                            {
+                                GoingAfterPlayer();
+                                return;
+                            }
+                            UnsubribeFromPlayerLocationSignal();
+                            AttackingCrate();
 
                             break;
                         default:
+                            if(Vector3.Distance(Player.gameObject.transform.position,this.gameObject.transform.position) <= DetectionRange.radius / 2)
+                            {
 
-                            GoingAfterPlayer();
+                                GoingAfterPlayer();
+                            }
+                            else
+                            {
+                                OnRoam?.Invoke();
+                            }
 
                             break;
                     }
 
+                    ResetAnimatorBools();
+                    animator.SetBool("IsMoving", true);
+
                     break;
                 case RobiteStates.Attacking:
+                    if(AttackingTarget)
+                    {
+                        
+                        AttackCorotine = StartCoroutine(Attacking());
+
+                        ResetAnimatorBools();
+                        animator.SetBool("IsAttacking", true);
+                        
+
+                    }
 
                     break;
                 case RobiteStates.Stunned:
@@ -190,24 +311,38 @@ namespace Robitnekics
                             break;
                     }
 
+                    ResetAnimatorBools();
+                    animator.SetBool("IsMoving", true);
                     break;
                 case RobiteStates.Death:
+
+                    ResetAnimatorBools();
+                    animator.SetBool("IsDeath", true);
 
                     break;
             }
         }
+        void ResetAnimatorBools()
+        {
+            animator.SetBool("IsAttacking",false);
+            animator.SetBool("IsMoving", false);
+            animator.SetBool("IsDeath", false);
 
+        }
         private void GoingAfterPlayer()
         {
             Agent.SetDestination(Player.transform.position);
 
             Player.OnPlayerPositionChanged += PlayerChangedPosition;
 
+            AttackingTarget = Player.gameObject;
+
         }
         private void AttackingCrate()
         {
             Agent.SetDestination(TargetEvent.transform.position);
 
+            AttackingTarget = TargetEvent.gameObject;
             UnsubribeFromPlayerLocationSignal();
         }
         void UnsubribeFromPlayerLocationSignal()
@@ -220,7 +355,9 @@ namespace Robitnekics
         }
         void StartAttacking()
         {
+
             state = RobiteStates.Attacking;
+            UnsubribeFromPlayerLocationSignal();
             HandleState();
 
         }
@@ -232,6 +369,7 @@ namespace Robitnekics
         }
         void PlayerChangedPosition(Vector3 NewLocation)
         {
+            if(Agent == null) { return; }
             // Check if typ is Standard or sudden or if it is attacked by player 
             Agent.destination = NewLocation;
             Debug.Log("Updated Path");
@@ -306,6 +444,58 @@ namespace Robitnekics
                 }
             }
         }
+        IEnumerator Attacking()
+        {
+            while(state == RobiteStates.Attacking)
+            {
+                yield return new WaitForSeconds(RobDataCombat.Attackspeed);
+                if(state != RobiteStates.Attacking)
+                {
+                    StopCoroutine(AttackCorotine);
+                }
+                switch(AttackingTarget.tag)
+                {
+                    case "LockedCrate":
+
+                        TargetEvent.TakeDamage(RobDataCombat.BaseDamage);
+
+                        break;
+                    default:
+                        Debug.Log("Attacked player");
+                        Player.TakeDamage(RobDataCombat.BaseDamage);
+                        break;
+                }
+            }
+        }
+
+        #region Radar Scann
+        public bool DetectedByPlayer()
+        {
+            float DetectionChance = 1 - RadarDetectionResistance;
+            int Random = UnityEngine.Random.Range(1,100);
+            if (Minimap_Icon == null)
+            {
+                Debug.Log("Minimap does ntot exits");
+                return false;
+            }
+            if(DetectionChance <= 0)
+            {
+
+                return false;
+            }
+            else if(Random <= (DetectionChance * 100))
+            {
+                Minimap_Icon.gameObject.SetActive(true);
+                return true;
+            }
+            return false;
+        }
+        public void OutofRadarRange()
+        {
+
+            Minimap_Icon.gameObject.SetActive(false);
+        }
+        #endregion
     }
 
 }

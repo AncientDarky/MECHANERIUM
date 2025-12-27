@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 402669833756416775}
   - component: {fileID: 1208905602211247524}
-  m_Layer: 11
+  m_Layer: 2
   m_Name: Detection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8550934419358393384}
   - component: {fileID: 9137569019267532584}
-  m_Layer: 11
+  m_Layer: 2
   m_Name: AttackRange
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,6 +120,8 @@ GameObject:
   - component: {fileID: 5628068654678542210}
   - component: {fileID: 2898665211185364078}
   - component: {fileID: 4767970105798862940}
+  - component: {fileID: 3236548934177342042}
+  - component: {fileID: 2709534332983535719}
   m_Layer: 11
   m_Name: Robiter
   m_TagString: Enemy
@@ -136,7 +138,7 @@ Transform:
   m_GameObject: {fileID: 9080309191800327546}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.46, y: 0.43, z: -11.82}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -213,10 +215,14 @@ MonoBehaviour:
   state: 0
   RobType: 0
   RobDataCombat: {fileID: 11400000, guid: 0fd110726764f6e40a12208c35904aa2, type: 2}
-  Minimap_Icon: {fileID: 0}
+  HP: 120
+  Loot: {fileID: 0}
+  Minimap_Icon: {fileID: 5692729769299780199}
   RadarDetectionResistance: 0
-  BaseLootMultiplier: 0
-  BaseLoot: []
+  BaseLootMultiplier: 1
+  BaseLoot:
+  - Material: 1
+    Value: 10
 --- !u!195 &2898665211185364078
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -231,7 +237,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 0.85
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -266,6 +272,49 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!95 &3236548934177342042
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9080309191800327546}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: edef3d51921adfd4dab5d957c23bb3ec, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &2709534332983535719
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9080309191800327546}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 4, z: 1}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1001 &2172885390394192328
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -314,6 +363,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4368212622369542187, guid: 58befd4bed8d4ad4cb08c78807808701, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 5847642986329101231, guid: 58befd4bed8d4ad4cb08c78807808701, type: 3}
       propertyPath: m_Name
       value: Minimap_Enemy
@@ -326,5 +379,10 @@ PrefabInstance:
 --- !u!4 &1172993346495794334 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1036088480663584086, guid: 58befd4bed8d4ad4cb08c78807808701, type: 3}
+  m_PrefabInstance: {fileID: 2172885390394192328}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5692729769299780199 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5847642986329101231, guid: 58befd4bed8d4ad4cb08c78807808701, type: 3}
   m_PrefabInstance: {fileID: 2172885390394192328}
   m_PrefabAsset: {fileID: 0}

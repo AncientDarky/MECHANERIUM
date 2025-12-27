@@ -22,7 +22,7 @@ namespace Mechaerium
         {
 
             Visuals.SetBool("Toggle",false);
-
+            Hitpoint = MAXHP;
         }
         public void FireShell()
         {
@@ -42,7 +42,7 @@ namespace Mechaerium
 
 
             GameObject NewShell = Instantiate(Shell, TargetWithAccurcy,Quaternion.identity);
-            NewShell.GetComponent<ArtilleryShell>().Init(FlightTime);
+            NewShell.GetComponent<ArtilleryShell>().Init(FlightTime,BaseDamage);
             Debug.Log("FiredShell");
 
         }

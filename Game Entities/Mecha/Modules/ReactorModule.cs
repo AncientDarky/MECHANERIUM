@@ -12,5 +12,17 @@ namespace Mechaerium
         {
 
         }
+        #region UI Chartacter Sheet 
+        public float[] TransferModuleValues(int Index)
+        {
+            float[] Values = new float[3];
+
+            Values[0] = NormalSpeed[Index];
+            Values[1] = SelfRepairSpeed[Index];
+            Values[2] = AimingRotationSpeed[Index];
+
+            return Values;
+        }
+        #endregion
     }
 }

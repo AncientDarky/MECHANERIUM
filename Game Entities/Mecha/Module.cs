@@ -11,14 +11,14 @@ namespace Mechaerium
     }
     public class Module : MonoBehaviour
     {
-        ModuleStates ModuleState;
+        internal ModuleStates ModuleState;
 
         [Header("Module General Properties")]
-        [SerializeField] float Hitpoint;
+        [SerializeField] internal float Hitpoint;
         public float HITPOINT => Hitpoint;
 
-        [SerializeField] int MaxHitpoint;
-        public int MAXHP => MaxHitpoint;
+        [SerializeField] internal int[] MaxHitpoint;
+        public int MAXHP => MaxHitpoint[ModuleLevel];
 
         [SerializeField]public int ModuleLevel;
         internal bool Invulnerable;
@@ -31,13 +31,14 @@ namespace Mechaerium
         public bool InventoryHasOverloadedCostMaterial => Mecha.STORERAGE.HasEnoughMaterial(OverloadedMaterialConsumption[ModuleLevel].Material, OverloadedMaterialConsumption[ModuleLevel].Value);
 
 
-        public Action OnUpraded;
+        public Action OnUpraded,OnRepaired;
         public Action<ModuleStates> StateChanged;
         private void Awake()
         {
             StateChanged += ChangingState;
             Invulnerable = true;
         }
+       
         public void IncreaseLevel()
         {
 
@@ -62,7 +63,7 @@ namespace Mechaerium
         public void RegainHP(float HPGain)
         {
             
-            Hitpoint = Mathf.Clamp(Hitpoint + HPGain,0,MaxHitpoint);
+            Hitpoint = Mathf.Clamp(Hitpoint + HPGain, 0, MaxHitpoint[ModuleLevel]);
             
         }
         public void ChangingState(ModuleStates ToState)

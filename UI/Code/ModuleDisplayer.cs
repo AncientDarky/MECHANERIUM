@@ -13,6 +13,8 @@ public class ModuleDisplayer : MonoBehaviour
 
     public Action OnValueChanged;
 
+    public Module OwnerModule;
+
     private void Awake()
     {
         MechaStorageInstance = Mecha.STORERAGE;
@@ -20,7 +22,8 @@ public class ModuleDisplayer : MonoBehaviour
     public void Upgrade()
     {
 
-        FindAnyObjectByType<ArmourModule>().IncreaseLevel();
+        OwnerModule.IncreaseLevel();
+
         OnValueChanged?.Invoke();
 
     }

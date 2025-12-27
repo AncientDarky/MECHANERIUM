@@ -7,6 +7,7 @@ public class ArmourDisplayer : ModuleDisplayer
     private void Awake()
     {
         DisplayingArmour = FindAnyObjectByType<ArmourModule>();
+        OwnerModule = DisplayingArmour;
     }
     private void Start()
     {

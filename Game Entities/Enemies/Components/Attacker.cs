@@ -24,8 +24,8 @@ namespace Robitnekics
                     Owner.OnAttacking?.Invoke();
 
                     break;
-                case "HackedCrate":
-
+                case "LockedCrate":
+                    Owner.OnAttacking?.Invoke();
                     break;
                 case "Node":
 
@@ -37,9 +37,9 @@ namespace Robitnekics
             switch (other.gameObject.tag)
             {
                 case "Player":
-
+                    Owner.OnEngagement?.Invoke();
                     break;
-                case "HackedCrate":
+                case "LockedCrate":
 
                     break;
                 case "Node":

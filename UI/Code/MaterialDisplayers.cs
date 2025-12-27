@@ -28,13 +28,10 @@ public class MaterialDisplayers : ModuleDisplayer
         ValueDisplayers[2].text = MechaStorageValues[2].ToString();
         ValueDisplayers[3].text = MechaStorageValues[3].ToString();
 
-        Debug.Log("BBBBBB" + Consumptions[2].text);
         Consumptions[0].text = MechaTotalConsumptionValues[0].ToString();
         Consumptions[1].text = MechaTotalConsumptionValues[1].ToString();
         Consumptions[2].text = MechaTotalConsumptionValues[2].ToString();
-        Debug.Log("asdasd" + MechaTotalConsumptionValues[2].ToString());
 
-        Debug.Log("aAAAAAsdasd" + Consumptions[2].text);
         Consumptions[3].text = MechaTotalConsumptionValues[3].ToString();
     }
 

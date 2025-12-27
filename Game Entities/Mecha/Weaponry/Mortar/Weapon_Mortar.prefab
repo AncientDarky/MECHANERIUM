@@ -564,10 +564,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hitpoint: 250
-  MaxHitpoint: 250
+  MaxHitpoint: f4010000
   ModuleLevel: 0
   MaxModuleLevel: 2
-  UpgradeCost: []
+  UpgradeCost:
+  - Material: 0
+    Value: 0
   MaterialConsumption:
   - Material: 1
     Value: 0
@@ -575,10 +577,10 @@ MonoBehaviour:
   FuncType: 1
   AutoEngageDetector: {fileID: 0}
   BaseDamage:
-    Physical: 0
+    Physical: 40
     Piercing: 0
-    Heat: 0
-    Explosion: 0
+    Heat: 20
+    Explosion: 40
   ToggleOn: 0
   InstallCost:
     Material: 0

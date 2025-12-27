@@ -162,12 +162,15 @@ namespace Mechaerium
                 {
                     Mecha.STORERAGE.IncreasingAmmunitionConsumption(MaterialConsumption[ModuleLevel].Material, MaterialConsumption[ModuleLevel].Value,true);
                     Debug.Log("Resource Avaialble");
+                    if(WeaponAnimator.GetBool("IsFiring") == false)
+                    {
 
-                    WeaponAnimator.SetBool("IsFiring",true);
+                        WeaponAnimator.SetBool("IsFiring", true);
+                        Visuals.SetBool("Toggle", true);
+                    }
 
                     WeaponAnimator.SetBool("IsIdle", false);
 
-                    Visuals.SetBool("Toggle",true);
 
                 }
             }

@@ -73,7 +73,8 @@ namespace Mechaerium
 
 
         #region UI Elements 
-        [SerializeField] Image[] ToggleIcons,WeaponIcons;
+        [SerializeField] Image[] ToggleIcons;
+        [SerializeField] Image[] WeaponIcons;
         #endregion
 
         private void OnEnable()
@@ -140,7 +141,7 @@ namespace Mechaerium
 
             for (int a = 5; a > 0;a--)
             {
-                if (MechaModules[a].Invulnerable)
+                if (MechaModules[a].Invulnerable || MechaModules[a].HITPOINT <= 0)
                 {
                     continue;
                 }
@@ -149,9 +150,9 @@ namespace Mechaerium
                     Debug.Log("AAAA");
                     if(MechaModules[a].enabled)
                     {
-                        MechaModules[a].ReduceHP(dama.Physical - dama.Physical * PhysicalResistance); 
-                        MechaModules[a].ReduceHP(dama.Heat - dama.Heat * HeatResistance);
-                        MechaModules[a].ReduceHP(dama.Explosion - dama.Explosion * ExplosionResistance);
+                        MechaModules[a].ReduceHP(damage.Physical - damage.Physical * PhysicalResistance); 
+                        MechaModules[a].ReduceHP(damage.Heat - damage.Heat * HeatResistance);
+                        MechaModules[a].ReduceHP(damage.Explosion - damage.Explosion * ExplosionResistance);
                     break;
 
                     }
@@ -231,6 +232,7 @@ namespace Mechaerium
         }
         void HandleStates()
         {
+
             switch (state)
             {
                 case MechaStates.Walking:
@@ -263,6 +265,7 @@ namespace Mechaerium
         {
             if(context.started)
             {
+                Debug.Log("Fireing LMB WEapons");
                 for (int a = 0; a < 3;a++)
                 {
                     if (Arsenal[a] != null)
@@ -354,28 +357,39 @@ namespace Mechaerium
             if (Arsenal[index] == null) { return;  }
             Arsenal[index].ToggleOn = !Arsenal[index].ToggleOn;
 
-            UpdatingWeaponToggles();
+            Sprite ToggledOn = Resources.Load<Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_ON");
+            Sprite ToggeledOff = Resources.Load< Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_OFF");
+            Debug.Log("Testing " + ToggledOn + " " + ToggleIcons[index]);
+            if (Arsenal[index].ToggleOn)
+            {
+                ToggleIcons[index].sprite = ToggledOn;
+            }
+            else
+            {
+                ToggleIcons[index].sprite = ToggeledOff;
+
+            }
         }
         
         void UpdatingWeaponToggles()
         {
-            object ToggledOn = Resources.Load<Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_ON");
-            object ToggeledOff = Resources.Load<Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_OFF");
+            Sprite ToggledOn = Resources.Load<Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_ON");
+            Sprite ToggeledOff = Resources.Load<Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_OFF");
 
            for(int A = 0; A < Arsenal.Count;A++)
             {
                 if (Arsenal[A] == null)
                 {
-                    ToggleIcons[A].sprite = ToggeledOff as Sprite;
+                    ToggleIcons[A].sprite = ToggeledOff;
                 }
                 else if (Arsenal[A].ToggleOn)
                 {
-                    ToggleIcons[A].sprite = ToggledOn as Sprite;
+                    ToggleIcons[A].sprite = ToggledOn;
 
                 }
                  else if (Arsenal[A].ToggleOn == false)
                 {
-                    ToggleIcons[A].sprite = ToggeledOff as Sprite;
+                    ToggleIcons[A].sprite = ToggeledOff;
 
                 }
             }

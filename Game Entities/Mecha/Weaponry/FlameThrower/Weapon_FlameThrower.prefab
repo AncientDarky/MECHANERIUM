@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hitpoint: 250
-  MaxHitpoint: 250
+  MaxHitpoint: fa000000
   ModuleLevel: 0
   MaxModuleLevel: 10
   UpgradeCost:
