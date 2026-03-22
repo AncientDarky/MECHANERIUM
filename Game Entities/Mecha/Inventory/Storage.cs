@@ -1,35 +1,84 @@
 using Mechaerium;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-
+[Serializable]
 public class Storage
 {
-    Dictionary<MaterialTypes, float> Inventory = new Dictionary<MaterialTypes, float>();
-    Cost[] TotalConsump; 
+    public Dictionary<MaterialTypes, float> Inventory = new Dictionary<MaterialTypes, float>();
+    public Cost[] TotalConsump;
+    public float TOTALMATS;
+    public float IronPercentile {
+      get {
+            return (Inventory[MaterialTypes.Iron] * 100) / TOTALMATS; 
+          }
+    }
+    public float CopperPercentile
+    {
+        get
+        {
+            return (Inventory[MaterialTypes.Copper] * 100) / TOTALMATS;
+        }
+    }
+    public float OilPercentile
+    {
+        get
+        {
+            return (Inventory[MaterialTypes.Oil] * 100) / TOTALMATS;
+        }
+    }
+    public float SulfurPercentile
+    {
+        get
+        {
+            return (Inventory[MaterialTypes.Sulfur] * 100) / TOTALMATS;
+        }
+    }
 
     public Storage()
     {
-        Inventory.Add(MaterialTypes.Iron,0);
-        Inventory.Add(MaterialTypes.Copper, 0);
-        Inventory.Add(MaterialTypes.Oil, 0);
-        Inventory.Add(MaterialTypes.Sulfur, 0);
-        Inventory.Add(MaterialTypes.WModule, 0);
-        Inventory.Add(MaterialTypes.UModule, 0);
-        TotalConsump = new Cost[Inventory.Count - 1];
-        for (int a = 0; a < TotalConsump.Length; a++)
+        Inventory.Add(MaterialTypes.Iron,1000);
+        Inventory.Add(MaterialTypes.Copper, 250);
+        Inventory.Add(MaterialTypes.Oil, 50);
+        Inventory.Add(MaterialTypes.Sulfur, 250);
+        Inventory.Add(MaterialTypes.WModule, 10);
+        Inventory.Add(MaterialTypes.UModule, 10);
+        TotalConsump = new Cost[Inventory.Count - 1]; 
+        float Tots = 0;
+        foreach (MaterialTypes mat in Inventory.Keys)
         {
-            foreach(MaterialTypes key in Inventory.Keys)
-            {
-                TotalConsump[a] = new Cost();
-                TotalConsump[a].Material = key;
-                TotalConsump[a].Value = 0;
-            }
+            Tots += Inventory[mat];
+
         }
+        TOTALMATS = Tots;
+
+        TotalConsump[0] = new Cost();
+        TotalConsump[1] = new Cost();
+        TotalConsump[2] = new Cost();
+        TotalConsump[3] = new Cost();
+
+        TotalConsump[0].Material = MaterialTypes.Iron;
+        TotalConsump[1].Material = MaterialTypes.Copper;
+        TotalConsump[2].Material = MaterialTypes.Sulfur;
+        TotalConsump[3].Material = MaterialTypes.Oil;
+
+        TotalConsump[0].Value = 0;
+        TotalConsump[1].Value = 0;
+        TotalConsump[2].Value = 0;
+        TotalConsump[3].Value = 0;
+
+    }
+    public bool CheckForMats(MaterialTypes Mat, float Amount)
+    {
+
+        bool A = Inventory[Mat] >= Amount;
+
+        return A;
     }
     public bool HasEnoughMaterial(MaterialTypes Mat, float Amount)
     {
 
-        bool A = Inventory[Mat] <= Amount;
+        bool A = Inventory[Mat] >= Amount;
 
         if (A)
         {
@@ -43,6 +92,26 @@ public class Storage
     public void ConsumingMats(MaterialTypes Mat, float Amount)
     {
         Inventory[Mat] = Mathf.Clamp(Inventory[Mat] - Amount, 0,Mathf.Infinity);
+        float Tots = 0;
+        foreach(MaterialTypes mat in Inventory.Keys)
+        {
+            Tots += Inventory[mat];
+
+        }
+        TOTALMATS = Tots;
+    }
+    public void ConsumingAmmoMats()
+    {
+        Debug.Log("Consumedammot");
+        for (int i = 0; i < TotalConsump.Length; i++)
+        {
+            if (Inventory.ContainsKey(TotalConsump[i].Material))
+            {
+                Debug.Log("Consumedammot" + TotalConsump[i].Material + "amount of " + TotalConsump[i].Value);
+                Inventory[TotalConsump[i].Material] = Mathf.Clamp( Inventory[TotalConsump[i].Material] - TotalConsump[i].Value * Time.deltaTime,0,Mathf.Infinity);
+
+            }
+        }
     }
     public void IncreasingAmmunitionConsumption(MaterialTypes Mat,float Amt,bool Increases)
     {
@@ -52,7 +121,7 @@ public class Storage
             {
                 if (TotalConsump[i].Material == Mat)
                 {
-                    TotalConsump[i].Value += Amt;
+                    TotalConsump[i].Value = Mathf.Clamp(TotalConsump[i].Value + Amt, 0, Mathf.Infinity);
                     break;
                 }
             }
@@ -64,7 +133,7 @@ public class Storage
             {
                 if (TotalConsump[i].Material == Mat)
                 {
-                    TotalConsump[i].Value -= Amt;
+                    TotalConsump[i].Value = Mathf.Clamp(TotalConsump[i].Value - Amt,0,Mathf.Infinity);
                     break;
                 }
             }
@@ -73,6 +142,14 @@ public class Storage
     public void HarvestingMats(MaterialTypes Mat, float Amount)
     {
         Inventory[Mat] = Mathf.Clamp(Inventory[Mat] + Amount, 0, Mathf.Infinity);
+        float Tots = 0;
+        foreach (MaterialTypes mat in Inventory.Keys)
+        {
+            Tots += Inventory[mat];
+
+        }
+        TOTALMATS = Tots;
+
     }
     public float[] GetInventoryValues()
     {
@@ -92,5 +169,69 @@ public class Storage
             ConsumptionValues[i] = TotalConsump[i].Value;
         }
         return ConsumptionValues;
+    }
+    public MaterialTypes GetLowestMaterial()
+    {
+        Dictionary<float, MaterialTypes> SortBaseOnValue = new Dictionary<float, MaterialTypes>();
+
+        List<float> InventoryVlauesUnsorted = new List<float>();
+
+        foreach (MaterialTypes mat in Inventory.Keys)
+        {
+
+            if (mat == MaterialTypes.WModule || mat == MaterialTypes.UModule)
+            { continue; }
+            InventoryVlauesUnsorted.Add(Inventory[mat]);
+        }
+
+        InventoryVlauesUnsorted.Sort();
+
+        MaterialTypes Lowest = MaterialTypes.None;
+
+        foreach (MaterialTypes m in Inventory.Keys)
+        {
+
+            if (m == MaterialTypes.WModule || m == MaterialTypes.UModule)
+            { continue; }
+
+            if (Inventory[m] == InventoryVlauesUnsorted[0])
+            {
+                Lowest = m;
+                break;
+            }
+
+        }
+        return Lowest;
+    }
+    public MaterialTypes GetHighestMaterial()
+    {
+        Dictionary<float, MaterialTypes> SortBaseOnValue = new Dictionary<float, MaterialTypes>();
+        
+
+        List<float> InventoryVlauesUnsorted = new List<float>();
+
+        foreach (MaterialTypes mat in Inventory.Keys)
+        {
+
+            if (mat == MaterialTypes.WModule || mat == MaterialTypes.UModule)
+            { continue; }
+
+            InventoryVlauesUnsorted.Add(Inventory[mat]);
+        }
+
+        InventoryVlauesUnsorted.Sort();
+        MaterialTypes Highest = MaterialTypes.None;
+
+        foreach (MaterialTypes m in Inventory.Keys)
+        {
+            if(m == MaterialTypes.WModule || m == MaterialTypes.UModule) { continue; }
+            if (Inventory[m] == InventoryVlauesUnsorted[InventoryVlauesUnsorted.Count - 1])
+            {
+                Highest = m;
+                break;
+            }
+        }
+
+        return Highest;
     }
 }

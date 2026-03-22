@@ -14,7 +14,7 @@ public class Node : MonoBehaviour
 
     private void Awake()
     {
-        MechaStorageInstance = Mecha.STORERAGE;
+        MechaStorageInstance = FindAnyObjectByType<Mecha>().STORERAGE;
     }
     public bool HarvestedTicked(int harvestingSpeed,float YieldMultiplier)
     {

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.VFX;
@@ -18,6 +19,7 @@ namespace Mechaerium
 
         Transform CurrentCanon;
 
+        Coroutine FireShellCoro;
         private void Start()
         {
 
@@ -28,7 +30,14 @@ namespace Mechaerium
         {
             CurrentCanon = MortarCannons[Random.Range(0, MortarCannons.Length - 1)];
 
-
+            for (int ii = 0; ii < MaterialConsumption.Length; ii++)
+            {
+                if (FindAnyObjectByType<Mecha>().MechStorage.CheckForMats(MaterialConsumption[ii].Material, MaterialConsumption[ii].Value) == false)
+                {
+                    WeaponStopFiring();
+                    return;
+                }
+            }
 
             Vector3 TargetLocation = Mecha.MouseWorldPosition;
             Vector3 TargetWithAccurcy = TargetLocation + ProjectileAccurcy();
@@ -39,16 +48,24 @@ namespace Mechaerium
             Visuals.SetVector3("DirectionVelo", Result);
             Visuals.SetVector3("TargetLocation", new Vector3(TargetWithAccurcy.x, 0,TargetWithAccurcy.z));
             Visuals.SetBool("Toggle", true);
-
-
-            GameObject NewShell = Instantiate(Shell, TargetWithAccurcy,Quaternion.identity);
-            NewShell.GetComponent<ArtilleryShell>().Init(FlightTime,BaseDamage);
-            Debug.Log("FiredShell");
-
+            FireShellCoro = StartCoroutine(SpawnExplosion(TargetWithAccurcy));
+        }
+        IEnumerator SpawnExplosion(Vector3 TargetWithAccurcy)
+        {
+            while(ToggleOn && WeaponAnimator.GetBool("IsFiring"))
+            {
+                yield return new WaitForSeconds(FlightTime);
+                GameObject NewShell = Instantiate(Shell, TargetWithAccurcy, Quaternion.identity);
+                NewShell.GetComponent<ArtilleryShell>().Init(1, BaseDamage);
+                StopCoroutine(FireShellCoro);
+                Debug.Log("FiredShell");
+            }
         }
         public void NotFiring()
         {
             WeaponStopFiring();
+            StopCoroutine(FireShellCoro);
+            FireShellCoro = null;
             Visuals.SetBool("Toggle", false);
 
         }

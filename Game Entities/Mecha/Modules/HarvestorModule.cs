@@ -46,7 +46,8 @@ namespace Mechaerium
         }
         private void OnEnable()
         {
-            
+
+
         }
         private void OnDisable()
         {
@@ -143,6 +144,10 @@ namespace Mechaerium
         #region UI Chartacter Sheet 
         public float[] TransferModuleValues(int Index)
         {
+            if(Index > MaxModuleLevel)
+            {
+                Index = MaxModuleLevel;
+            }
             float[] Values = new float[4];
 
             Values[0] = GatheringDamage[Index];

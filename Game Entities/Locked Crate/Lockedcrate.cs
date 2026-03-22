@@ -1,18 +1,20 @@
-using FischlWorks_FogWar;
 using Mechaerium;
-
 using Robitnekics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Lockedcrate : MonoBehaviour
 {
     [SerializeField] int MaxHP;
     float HP;
+    [SerializeField] Slider BarSlider;
     public CrateStates state;
-    Storage MechaStorageInstance => Mecha.STORERAGE;
+
+    Storage MechaStorageInstance;
+
     [Header("Crate Hacking Properties")]
     [SerializeField] float RequiredHackingValue, CurrentHackingProgress, ResetDureation;
     public float HACKPROGRESS => CurrentHackingProgress;
@@ -23,8 +25,9 @@ public class Lockedcrate : MonoBehaviour
 
     public Action OnDestruction, OnHacked, OnHackStarted, OnReset;
 
-
+    [Header("Reward Properties")]
     [SerializeField] Cost[] Loot;
+    [SerializeField] float LifeSupportReplenishment;
 
     Animator animator;
 
@@ -36,15 +39,17 @@ public class Lockedcrate : MonoBehaviour
     [SerializeField] float MinSpawnDistance,MaxSpawnDistance;
     [SerializeField] int SpawnSpotCounts;
     [SerializeField] GameObject Robite_SpawnPrefabs;
-    [SerializeField] float SpawningFrequency,SpawningCount;
+    [SerializeField] float SpawningFrequency,SpawnCountPerFrequency,MaxSpawningCount;
 
     Coroutine SpawningCorotine;
     private void Start()
     {
         HP = MaxHP;
+        BarSlider.maxValue = MaxHP;
+        BarSlider.value = HP;
         state = CrateStates.Idle;
         animator = GetComponent<Animator>();
-
+        MechaStorageInstance = FindAnyObjectByType<Mecha>().STORERAGE;
         SettingRobiterSpawnLocations();
     }
 
@@ -73,7 +78,8 @@ public class Lockedcrate : MonoBehaviour
         while (shouldSpawn)
         {
             yield return new WaitForSeconds(SpawningFrequency);
-            for(int i = 0; i < SpawningCount; i++)
+            int Spawned = 0;
+            for(int i = 0; i < SpawnCountPerFrequency; i++)
             {
 
                 Vector3 SpawnLocation = SpawnLocations[UnityEngine.Random.Range(0,SpawnLocations.Length - 1)];
@@ -81,6 +87,11 @@ public class Lockedcrate : MonoBehaviour
                 Robites Robiter = RobiteSpawned.GetComponent<Robites>();
                 SpawnedRobit.Add(Robiter);
                 Robiter.Reinit(this,false);
+                Spawned++;
+                if(Spawned >= MaxSpawningCount)
+                {
+                    shouldSpawn = false;
+                }
 
             }
         }
@@ -89,6 +100,7 @@ public class Lockedcrate : MonoBehaviour
     {
         OnDestruction += CrateDestroyed;
         OnHackStarted += StartWave;
+
     }
     private void OnDisable()
     {
@@ -101,7 +113,7 @@ public class Lockedcrate : MonoBehaviour
         state = CrateStates.Hacking;
 
         CurrentHackingProgress += ProgressValue;
-        if(CurrentHackingProgress >= RequiredHackingValue && animator.GetBool("IsHacked") == false)
+        if(CurrentHackingProgress >= RequiredHackingValue && animator.GetBool("IsHacked") == false && state != CrateStates.Destroyed)
         {
             CrateHacked();
         }
@@ -133,7 +145,9 @@ public class Lockedcrate : MonoBehaviour
         HP = Mathf.Clamp(HP - damage.Heat, 0, MaxHP);
         HP = Mathf.Clamp(HP - damage.Explosion, 0, MaxHP);
 
-        if(HP <= 0)
+        BarSlider.value = Mathf.RoundToInt(HP);
+
+        if (HP <= 0)
         {
             OnDestruction?.Invoke();
         }
@@ -163,6 +177,9 @@ public class Lockedcrate : MonoBehaviour
             Debug.Log("Loot Received from locked Crate");
 
         }
+
+        FindAnyObjectByType<CoreModule>().ReceivingLifeSupport(Mathf.RoundToInt(LifeSupportReplenishment));
+
         animator.SetBool("IsHacked",true);
     }
     IEnumerator ResetHackingProgress()

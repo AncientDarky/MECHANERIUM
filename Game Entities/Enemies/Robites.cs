@@ -113,7 +113,10 @@ namespace Robitnekics
         }
         public void Reinit(Lockedcrate Crate,bool StandardOrSudden)
         {
-            Agent.ResetPath();
+            if(Agent)
+            {
+                Agent.ResetPath();
+            }
 
             if (Crate)
             {

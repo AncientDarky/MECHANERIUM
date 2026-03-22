@@ -254,7 +254,7 @@ MonoBehaviour:
     Piercing: 0
     Heat: 0
     Explosion: 0
-  ToggleOn: 0
+  ToggleOn: 1
   InstallCost:
     Material: 0
     Value: 0

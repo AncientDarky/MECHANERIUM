@@ -193,6 +193,10 @@ namespace Mechaerium
         #region UI Character Sheet 
         public float[] TransferModuleValues(int Index)
         {
+            if (Index > MaxModuleLevel)
+            {
+                Index = MaxModuleLevel;
+            }
             float[] TransferValues = new float[3];
             TransferValues[0] = RadarStrength[Index];
             TransferValues[1] = RadarRange[Index];

@@ -17,7 +17,7 @@ public class ModuleDisplayer : MonoBehaviour
 
     private void Awake()
     {
-        MechaStorageInstance = Mecha.STORERAGE;
+        MechaStorageInstance = FindAnyObjectByType<Mecha>().MechStorage;
     }
     public void Upgrade()
     {

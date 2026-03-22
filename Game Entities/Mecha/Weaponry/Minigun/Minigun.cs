@@ -25,17 +25,23 @@ namespace Mechaerium
             Visuals.SetBool("Toggle",false);
 
             Hitpoint = MaxHitpoint[ModuleLevel];
+            WeaponEntity = this.gameObject;
         }
         
         public void FireMinigun()
         {
+            for(int ii= 0;ii < MaterialConsumption.Length;ii++)
+            {
+                if (FindAnyObjectByType<Mecha>().MechStorage.CheckForMats(MaterialConsumption[ii].Material, MaterialConsumption[ii].Value) == false)
+                {
+                    WeaponStopFiring();
+                    return;
+                }
+            }
 
             Vector3 FireDirection = this.transform.forward;
             Vector3 FireDirectionWithAccuracy = FireDirection + ProjectileAccurcy();
 
-            Debug.Log(FireDirectionWithAccuracy + "asdasd");
-
-            Debug.Log(FireDirectionWithAccuracy + "asdasdTwo");
 
 
             Visuals.SetVector3("Direction", FireDirectionWithAccuracy * ProjectileVelocity[ModuleLevel]);

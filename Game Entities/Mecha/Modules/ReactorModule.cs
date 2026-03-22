@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.Rendering.HighDefinition.ScalableSettingLevelParameter;
 namespace Mechaerium
 {
     public class ReactorModule : Module
@@ -15,6 +16,10 @@ namespace Mechaerium
         #region UI Chartacter Sheet 
         public float[] TransferModuleValues(int Index)
         {
+            if (Index > MaxModuleLevel)
+            {
+                Index = MaxModuleLevel;
+            }
             float[] Values = new float[3];
 
             Values[0] = NormalSpeed[Index];

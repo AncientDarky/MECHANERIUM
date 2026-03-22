@@ -1766,8 +1766,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: RadarDisplayer, Assembly-CSharp
+      - m_Target: {fileID: 9019061480138161204}
+        m_TargetAssemblyTypeName: CPUModuleDisplayer, Assembly-CSharp
         m_MethodName: Upgrade
         m_Mode: 1
         m_Arguments:
@@ -2370,8 +2370,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: RadarDisplayer, Assembly-CSharp
+      - m_Target: {fileID: 1213298183844642675}
+        m_TargetAssemblyTypeName: HarvestorModuleDisplayer, Assembly-CSharp
         m_MethodName: Upgrade
         m_Mode: 1
         m_Arguments:
@@ -3320,8 +3320,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: RadarDisplayer, Assembly-CSharp
+      - m_Target: {fileID: 5046606387792611315}
+        m_TargetAssemblyTypeName: ReactorModuleDisplayer, Assembly-CSharp
         m_MethodName: Upgrade
         m_Mode: 1
         m_Arguments:

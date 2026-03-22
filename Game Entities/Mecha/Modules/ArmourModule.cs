@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 namespace Mechaerium
 {
@@ -22,6 +23,10 @@ namespace Mechaerium
         }
         public float[] TransferModuleValues (int AtLevel)
         {
+            if (AtLevel > MaxModuleLevel)
+            {
+                AtLevel = MaxModuleLevel;
+            }
             float[] ValuesAre = new float[4];
             ValuesAre[0] = PhysicalResistance[AtLevel];
             ValuesAre[1] = Piercing[AtLevel];

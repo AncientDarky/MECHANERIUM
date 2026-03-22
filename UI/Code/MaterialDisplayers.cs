@@ -1,3 +1,4 @@
+using Mechaerium;
 using TMPro;
 using UnityEngine;
 
@@ -6,8 +7,8 @@ public class MaterialDisplayers : ModuleDisplayer
     [SerializeField] TextMeshProUGUI[] Consumptions;
 
 
-    float[] MechaStorageValues;
-    float[] MechaTotalConsumptionValues;
+    public float[] MechaStorageValues;
+    public float[] MechaTotalConsumptionValues;
 
     // 0 = Iron 1 = Copper 2= Oil 3 = Sulfur
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -20,6 +21,8 @@ public class MaterialDisplayers : ModuleDisplayer
     // Update is called once per frame
     void Update()
     {
+        MechaStorageInstance = FindAnyObjectByType<Mecha>().STORERAGE;
+
         MechaStorageValues = MechaStorageInstance.GetInventoryValues();
         MechaTotalConsumptionValues = MechaStorageInstance.GetConsumptionValues();
 
@@ -30,9 +33,8 @@ public class MaterialDisplayers : ModuleDisplayer
 
         Consumptions[0].text = MechaTotalConsumptionValues[0].ToString();
         Consumptions[1].text = MechaTotalConsumptionValues[1].ToString();
-        Consumptions[2].text = MechaTotalConsumptionValues[2].ToString();
-
-        Consumptions[3].text = MechaTotalConsumptionValues[3].ToString();
+        Consumptions[2].text = MechaTotalConsumptionValues[3].ToString();
+        Consumptions[3].text = MechaTotalConsumptionValues[2].ToString();
     }
 
 }

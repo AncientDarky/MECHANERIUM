@@ -7,6 +7,7 @@ namespace Mechaerium
 {
     public class WeaponModule : Module
     {
+        public GameObject WeaponEntity;
         [SerializeField] internal FunctionalityType FuncType;
         [SerializeField] SphereCollider AutoEngageDetector;
 
@@ -41,9 +42,14 @@ namespace Mechaerium
         }
         private void OnTriggerEnter(Collider other)
         {
-            switch(other.gameObject.tag)
+            if (FuncType != FunctionalityType.Automatic)
+            {
+                return;
+            }
+            switch (other.gameObject.tag)
             {
                 case "Enemy":
+
                     if(other.gameObject.GetComponent<Robites>())
                     {
 
@@ -154,20 +160,25 @@ namespace Mechaerium
         }
         public void WeaponStartFiring()
         {
+            Debug.Log("SWEAPONSTARTFIRING;");
             if(ToggleOn)
             {
 
                 Debug.Log("Toggeled On Weapon");
                 if(InventoryHasBaseCostMaterial)
                 {
-                    Mecha.STORERAGE.IncreasingAmmunitionConsumption(MaterialConsumption[ModuleLevel].Material, MaterialConsumption[ModuleLevel].Value,true);
-                    Debug.Log("Resource Avaialble");
-                    if(WeaponAnimator.GetBool("IsFiring") == false)
+                    for(int a  = 0; a < MaterialConsumption.Length;a++)
+                    {
+                        FindAnyObjectByType<Mecha>().STORERAGE.IncreasingAmmunitionConsumption(MaterialConsumption[a].Material, MaterialConsumption[a].Value, true);
+                       
+                    }
+                    if (WeaponAnimator.GetBool("IsFiring") == false)
                     {
 
                         WeaponAnimator.SetBool("IsFiring", true);
                         Visuals.SetBool("Toggle", true);
                     }
+
 
                     WeaponAnimator.SetBool("IsIdle", false);
 
@@ -182,8 +193,12 @@ namespace Mechaerium
           WeaponAnimator.SetBool("IsIdle", true);
 
             Visuals.SetBool("Toggle", false);
+            for (int a = 0; a < MaterialConsumption.Length; a++)
+            {
+                FindAnyObjectByType<Mecha>().STORERAGE.IncreasingAmmunitionConsumption(MaterialConsumption[a].Material, MaterialConsumption[a].Value, false);
 
-            Mecha.STORERAGE.IncreasingAmmunitionConsumption(MaterialConsumption[ModuleLevel].Material, MaterialConsumption[ModuleLevel].Value, false);
+            }
+
         }
         public void ToggleOnOff(bool Value)
         {
@@ -191,7 +206,7 @@ namespace Mechaerium
         }
         public void RemoveWeapon()
         {
-            Destroy(this.gameObject);
+            Destroy(WeaponEntity,1f);
         }
         private void LateUpdate()
         {

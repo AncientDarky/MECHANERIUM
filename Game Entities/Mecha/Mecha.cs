@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -61,10 +60,11 @@ namespace Mechaerium
         #region Mouse position in world 
         public static Vector3 MouseWorldPosition;
         #endregion
-        Storage MechStorage;
-        public static Storage STORERAGE { get { if (FindAnyObjectByType<Mecha>().MechStorage != null) { return FindAnyObjectByType<Mecha>().MechStorage; } FindAnyObjectByType<Mecha>().MechStorage = new Storage(); return FindAnyObjectByType<Mecha>().MechStorage; } }
+        public Storage MechStorage;
+        public Storage STORERAGE { get { if (FindAnyObjectByType<Mecha>().MechStorage != null) { return FindAnyObjectByType<Mecha>().MechStorage; } FindAnyObjectByType<Mecha>().MechStorage = new Storage(); return FindAnyObjectByType<Mecha>().MechStorage; } }
 
         public List<WeaponModule>Arsenal = new List<WeaponModule>();
+        public List<Transform> ArsenalTransform = new List<Transform>();
 
 
         Damage dama;
@@ -121,7 +121,6 @@ namespace Mechaerium
 
             ChangeMechaState(MechaStates.Idle);
 
-            UpdatingWeaponToggles();
         }
         public void TakeDamage(Damage damage)
         {
@@ -163,6 +162,8 @@ namespace Mechaerium
         private void Update()
         {
 
+            MechStorage.ConsumingAmmoMats();
+
             if (Movement.action.ReadValue<Vector2>().x != 0 || Movement.action.ReadValue<Vector2>().y != 0)
             {
                 if(MovementMultiplier != GetComponent<ReactorModule>().RunningSpeed[GetComponent<ReactorModule>().ModuleLevel])
@@ -179,7 +180,6 @@ namespace Mechaerium
                 ChangeMechaState(MechaStates.Idle);
             }
             AimingAtDiretion();
-
          
         }
         void Move()
@@ -301,44 +301,7 @@ namespace Mechaerium
             }
                
         }
-        void FiringRMBWeapons(InputAction.CallbackContext context)
-        {
-            if (context.started)
-            {
-                for (int a = 3; a < 6; a++)
-                {
-                    if (Arsenal[a] != null)
-                    {
-                        if (Arsenal[a].FuncType == FunctionalityType.Manual)
-                        {
-                            Arsenal[a].WeaponStartFiring();
-                        }
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-            }
-            else if (context.canceled)
-            {
-                for (int a = 0; a < 3; a++)
-                {
-                    if (Arsenal[a] != null)
-                    {
-                        if (Arsenal[a].FuncType == FunctionalityType.Manual)
-                        {
-                            Arsenal[a].WeaponStopFiring();
-                        }
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-            }
-
-        }
+       
         IEnumerator SignalPlayerLocation()
         {
             while(EnemyNearby)
@@ -352,50 +315,32 @@ namespace Mechaerium
         {
 
         }
-        public void ToggleWeapons(int index)
-        {
-            if (Arsenal[index] == null) { return;  }
-            Arsenal[index].ToggleOn = !Arsenal[index].ToggleOn;
-
-            Sprite ToggledOn = Resources.Load<Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_ON");
-            Sprite ToggeledOff = Resources.Load< Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_OFF");
-            Debug.Log("Testing " + ToggledOn + " " + ToggleIcons[index]);
-            if (Arsenal[index].ToggleOn)
-            {
-                ToggleIcons[index].sprite = ToggledOn;
-            }
-            else
-            {
-                ToggleIcons[index].sprite = ToggeledOff;
-
-            }
-        }
+    
         
-        void UpdatingWeaponToggles()
-        {
-            Sprite ToggledOn = Resources.Load<Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_ON");
-            Sprite ToggeledOff = Resources.Load<Sprite>("UI_Prefabs/Materials/WEAPONTOGGLE_OFF");
-
-           for(int A = 0; A < Arsenal.Count;A++)
-            {
-                if (Arsenal[A] == null)
-                {
-                    ToggleIcons[A].sprite = ToggeledOff;
-                }
-                else if (Arsenal[A].ToggleOn)
-                {
-                    ToggleIcons[A].sprite = ToggledOn;
-
-                }
-                 else if (Arsenal[A].ToggleOn == false)
-                {
-                    ToggleIcons[A].sprite = ToggeledOff;
-
-                }
-            }
        
-
+        public void InstallingWeaponry(int Index, WeaponModule Weapon)
+        {
+            if (Arsenal[Index] != null)
+            {
+                Destroy(Arsenal[Index].gameObject);
+                GameObject NewArsenal = Instantiate(Weapon.gameObject, ArsenalTransform[Index].position, Quaternion.identity);
+                NewArsenal.transform.SetParent(ArsenalTransform[Index]);
+                NewArsenal.transform.localScale = Vector3.one;
+                Arsenal[Index] = Weapon;
+            }
+            else if (Arsenal[Index] == null)
+            {
+                // Spawn weapon 
+                GameObject NewArsenal = Instantiate(Weapon.gameObject, ArsenalTransform[Index].position,Quaternion.identity);
+                NewArsenal.transform.SetParent(ArsenalTransform[Index]);
+                NewArsenal.transform.localScale = Vector3.one;
+                Arsenal[Index] = Weapon;
+                // set it at transform 
+                // add it arsenal List
+                // set up weapon
+            }
         }
+      
         #endregion
 
     }

@@ -26,25 +26,30 @@ public class ArtilleryShell : MonoBehaviour
     }
     public void Init(float LifeTime,Damage d)
     {
+
+        this.GetComponentInChildren<VisualEffect>().Play();
+
         animator.enabled = true;
         damage = d;
         animator.SetFloat("Delay",1 * LifeTime);
-        Invoke("Exploded",1 * LifeTime);
     }
-    void Exploded()
+    public void Exploded()
     {
         this.GetComponentInChildren<VisualEffect>().Play();
         Debug.Log("enemy Hit");
         Destroy(Ref_WarnHUD);
+        foreach(Robites robiter in WithinExplosionArea)
+        {
+            robiter.OnDamaged?.Invoke(damage);
+        }
+
         WithinExplosionArea.Clear();
     }
     private void OnTriggerStay(Collider other)
     {
-        this.GetComponentInChildren<VisualEffect>().Play();
 
         if (other.gameObject.tag == "Enemy" && WithinExplosionArea.Contains(other.gameObject.GetComponent<Robites>()) == false)
         {
-            other.gameObject.GetComponent<Robites>().OnDamaged?.Invoke(damage);
             WithinExplosionArea.Add(other.gameObject.GetComponent<Robites>());
         }
     

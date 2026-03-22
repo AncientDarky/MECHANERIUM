@@ -9,8 +9,16 @@ namespace Mechaerium
         public MaterialTypes Material;
         public float Value;
     }
+    [Serializable]
+    public struct LevelStat
+    {
+        public float Value;
+        public AnimationCurve GrowthCurve;
+    }
     public class Module : MonoBehaviour
     {
+        [SerializeField] public LevelStat Testing;
+
         internal ModuleStates ModuleState;
 
         [Header("Module General Properties")]
@@ -22,13 +30,13 @@ namespace Mechaerium
 
         [SerializeField]public int ModuleLevel;
         internal bool Invulnerable;
-        [SerializeField] int MaxModuleLevel;
+        [SerializeField] public int MaxModuleLevel;
         [SerializeField] Cost[] UpgradeCost;
         public float UPGRADECOSTAMT => UpgradeCost[0].Value;
         [SerializeField] internal Cost[] MaterialConsumption;
         [SerializeField] Cost[] OverloadedMaterialConsumption;
-        public bool InventoryHasBaseCostMaterial => Mecha.STORERAGE.HasEnoughMaterial(MaterialConsumption[ModuleLevel].Material, MaterialConsumption[ModuleLevel].Value);
-        public bool InventoryHasOverloadedCostMaterial => Mecha.STORERAGE.HasEnoughMaterial(OverloadedMaterialConsumption[ModuleLevel].Material, OverloadedMaterialConsumption[ModuleLevel].Value);
+        public bool InventoryHasBaseCostMaterial => FindAnyObjectByType<Mecha>().STORERAGE.HasEnoughMaterial(MaterialConsumption[ModuleLevel].Material, MaterialConsumption[ModuleLevel].Value);
+        public bool InventoryHasOverloadedCostMaterial => FindAnyObjectByType<Mecha>().STORERAGE.HasEnoughMaterial(OverloadedMaterialConsumption[ModuleLevel].Material, OverloadedMaterialConsumption[ModuleLevel].Value);
 
 
         public Action OnUpraded,OnRepaired;
@@ -37,12 +45,13 @@ namespace Mechaerium
         {
             StateChanged += ChangingState;
             Invulnerable = true;
+
         }
        
         public void IncreaseLevel()
         {
 
-            if (Mecha.STORERAGE.HasEnoughMaterial(UpgradeCost[0].Material, UpgradeCost[0].Value))
+            if (FindAnyObjectByType<Mecha>().STORERAGE.HasEnoughMaterial(UpgradeCost[0].Material, UpgradeCost[0].Value))
             {
                 ModuleLevel = Mathf.Clamp(ModuleLevel + 1,0,MaxModuleLevel);
                 OnUpraded?.Invoke();

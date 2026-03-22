@@ -18,9 +18,9 @@ public class HarvestorModuleDisplayer : ModuleDisplayer
     }
     void UpdatingValues()
     {
-        float[] CurrentVs = new float[2];
+        float[] CurrentVs = new float[4];
         CurrentVs = HarvestModule.TransferModuleValues(HarvestModule.ModuleLevel);
-        float[] UpgradedVs = new float[2];
+        float[] UpgradedVs = new float[4];
         UpgradedVs = HarvestModule.TransferModuleValues(HarvestModule.ModuleLevel + 1);
 
         StandardDisplayers[0].text = (HarvestModule.ModuleLevel + 1).ToString();

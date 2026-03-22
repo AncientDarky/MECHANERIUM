@@ -269,6 +269,10 @@ namespace Mechaerium
         #region UI Chartacter Sheet 
         public float [] TransferModuleValues(int Index)
         {
+            if (Index > MaxModuleLevel)
+            {
+                Index = MaxModuleLevel;
+            }
             float[] Values = new float[2];
 
             Values[0] = HackingSpeed[Index];
